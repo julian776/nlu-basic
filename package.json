@@ -1,0 +1,26 @@
+{
+  "name": "nlu-basic",
+  "version": "1.0.0",
+  "release": {
+    "repositoryUrl": ""
+  },
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nlu",
+    "nlp",
+    "recognizer"
+  ],
+  "author": "Julian Alvarez",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.9.3"
+  },
+  "volta": {
+    "node": "16.18.1"
+  }
+}
