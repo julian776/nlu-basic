@@ -1,10 +1,12 @@
 export class Entity {
-    constructor(
-      private intent: string,
-      private date: Date,
-      private params: Object
-    ) {}
+  constructor(
+    public readonly intent: string, //infoCamisas
+    public readonly intentStruct: string, //
+    public readonly date: Date,
+    public readonly params: Params
+  ) {}
+}
 
-    addExample() {}
-  }
-  
+export type Params = {
+  [key: string]: Array<string>;
+};
