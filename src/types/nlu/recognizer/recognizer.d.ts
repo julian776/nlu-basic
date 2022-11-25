@@ -1,3 +1,3 @@
 export interface Recognizer {
-    recognize(text: string): Entity;
+    async recognize(text: string): Promise<Entity>;
   }

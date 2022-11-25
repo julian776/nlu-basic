@@ -5,3 +5,9 @@ export class ResponseEntity {
     private params: Object
   ) {}
 }
+
+export class StrictStructError extends Error {
+  constructor(message='Strict assert failed') {
+    super(message)
+  }
+}

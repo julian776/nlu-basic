@@ -1,55 +1,100 @@
+import { Entity, Params } from "../../repositories/models/entity.model";
 import { Recognizer } from "../../types/nlu/recognizer/recognizer";
 import { Repository } from "../../types/nlu/repositories/entity-repository";
-import { Entity, Params } from "../repositories/models/entity.model";
 import { isTheSame } from "./helpers/helpers";
+import { StrictStructError } from "./models/entity";
 
 export class RecognizeText implements Recognizer {
-  
   constructor(private entityRepository: Repository) {}
 
-  recognize(text: string, strict=false): Entity {
-    const intentsStructure = this.entityRepository.getIntentsStructure()
+  async recognize(text: string, strict = false): Promise<Entity | undefined> {
+    const intentsStructure = this.entityRepository.getIntentsStructure();
 
-    intentsStructure.forEach(entity => {
-      const intentStruct = entity.intentStruct
-      this.compare(text, intentStruct, entity.params, strict)
-    })
-    return new Entity('df', 'fghfdfgdf', new Date(), {dfg: ['fgfg'], fgb:['sfddf']})
+    const entity = await Promise.race(
+      intentsStructure.map(async (entity) => {
+        try {
+          const intentStruct = entity.intentStruct;
+          const confidence = await this.compare(
+            text,
+            intentStruct,
+            entity.paramsExamples,
+            strict
+          );
+          if (confidence === 1) {
+            return Promise.resolve(
+              new Entity("df", "fghfdfgdf", new Date(), {
+                dfg: ["fgfg"],
+                fgb: ["sfddf"],
+              })
+            );
+          }
+        } catch (err) {}
+      })
+    );
+    if (entity) {
+      return entity;
+    }
   }
 
-  public compare(text: string, intentStruct: string, params: Params, strict=false) {
-    const textWords = text.split(' ')
-    const structWords = intentStruct.split(' ')   // intentStruct.replace(/{[a-zA-Z]}/, '')
+  public async compare(
+    text: string,
+    intentStruct: string,
+    paramsExamples: Params,
+    strict = false
+  ): Promise<number> {
+    const textWords = text.split(" ");
+    const structWords = intentStruct.split(" "); // intentStruct.replace(/{[a-zA-Z]}/, '')
 
-    // if (textWords.length !== structWords.length) {
-    //   throw new Error('Struct and text not have the same length of words')
-    // }
+    let coincidences = 0;
+    const arrayCoincidences = structWords.reduce(
+      (acc: boolean[], structWord, currIndx) => {
+        const textWord = textWords[currIndx];
+        const wordHasCoincidence = this.validateWordOrParam(
+          structWord,
+          textWord,
+          paramsExamples
+        );
+        if (wordHasCoincidence) {
+          coincidences++;
+        } else if (strict) {
+          throw new StrictStructError();
+        }
 
-    let coincidences = 0
-    const arrayCoincidences = structWords.reduce((acc: boolean[], structWord, currIndx) => {
-      const textWord = textWords[currIndx]
-      let wordHasCoincidence = false
-      if (structWord.includes('{') && structWord.includes('}')) {
-        const param = structWord.replace(/[\{\}]+/g, '')
-        console.log(params)
-        console.log(param)
-        wordHasCoincidence = this.validateParam(textWord, params[param])
-      } else {
-        wordHasCoincidence = isTheSame(textWord ,structWords[currIndx])
-      }
-      if (wordHasCoincidence) {
-        coincidences++
-      }
-      
-      return [...acc, wordHasCoincidence]
-    }, [])
-    console.log(coincidences)
-    console.log(arrayCoincidences)
-    return 'ACA'
+        return [...acc, wordHasCoincidence];
+      },
+      []
+    );
+
+    return this.checkConfidence(coincidences, arrayCoincidences);
+  }
+
+  private checkConfidence(
+    coincidences: number,
+    arrayCoincidences: boolean[]
+  ): number {
+    const confidence = coincidences / arrayCoincidences.length;
+    return confidence;
+  }
+
+  private validateWordOrParam(
+    structWord: string,
+    textWord: string,
+    paramsExamples: Params
+  ) {
+    if (structWord.includes("{") && structWord.includes("}")) {
+      const param = structWord.replace(/[\{\}]+/g, "");
+      const paramExample = paramsExamples[param];
+      return this.validateParam(textWord, paramExample);
+    }
+    return isTheSame(textWord, structWord);
   }
 
   private validateParam(word: string, paramExamples: Array<string>): boolean {
-    return paramExamples.includes(word) ? true : false
+    return paramExamples.includes(word) ? true : false;
+  }
+
+  public getDateFromText(text: string): Date {
+    return new Date();
   }
 
   private createResponseEntity(intent: string) {
