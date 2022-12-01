@@ -1,12 +1,15 @@
 export class Entity {
   constructor(
     public readonly intent: string, //infoCamisas
-    public readonly intentStruct: string, //
-    public readonly date: Date | string,
-    public readonly params: Params
+    public intentsStruct: Array<string>, //
+    public paramExamples: ParamExamples
   ) {}
+
+  addIntentsStruct(structs: Array<string>) {
+    this.intentsStruct = [...this.intentsStruct, ...structs]
+  }
 }
 
-export type Params = {
+export type ParamExamples = {
   [key: string]: Array<string>;
 };

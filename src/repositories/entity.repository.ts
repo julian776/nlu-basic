@@ -4,9 +4,9 @@ import { Entity } from "./models/entity.model";
 export class EntityRepository implements Repository {
   constructor(private intentsDB: Object, intents: Array<string>) {}
 
-  getIntentsStructure() {
+  getIntents() {
     return [
-      new Entity("df", "fghfdfgdf", new Date(), {
+      new Entity("df", ["fghfdfgdf"], {
         dfg: ["fgfg"],
         fgb: ["sfddf"],
       }),
