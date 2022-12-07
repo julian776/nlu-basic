@@ -1,10 +1,10 @@
-import { Repository } from "../types/nlu/repositories/entity-repository";
+import { IntentsDBClient, Repository } from "../types/nlu/repositories/entity-repository";
 import { Entity } from "./models/entity.model";
 
 export class EntityRepository implements Repository {
-  constructor(private intentsDB: Object, intents: Array<string>) {}
+  constructor(private readonly intentsDBClient: IntentsDBClient) {}
 
-  getIntents() {
+  getEntities() {
     return [
       new Entity("df", ["fghfdfgdf"], {
         dfg: ["fgfg"],

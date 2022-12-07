@@ -22,7 +22,7 @@ export class RecognizeText implements Recognizer {
     text: string,
     strict = false
   ): Promise<ResponseEntity | undefined> {
-    const intents = this.entityRepository.getIntents();
+    const intents = this.entityRepository.getEntities();
     if (!intents) {
       throw new Error("No intents to compare");
     }
@@ -130,6 +130,10 @@ export class RecognizeText implements Recognizer {
       );
     }
     this.minConfidence = newConfidence;
+  }
+
+  public getConfidence() {
+    return this.minConfidence;
   }
 
   private validateWordOrParam(

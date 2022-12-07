@@ -5,9 +5,9 @@ export class Entity {
     public paramExamples: ParamExamples
   ) {}
 
-  addIntentsStruct(structs: Array<string>) {
-    this.intentsStruct = [...this.intentsStruct, ...structs]
-  }
+  // addIntentsStruct(structs: Array<string>) {
+  //   this.intentsStruct = [...this.intentsStruct, ...structs]
+  // }
 }
 
 export type ParamExamples = {
