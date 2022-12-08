@@ -6,7 +6,7 @@ export interface Repository {
   }
 
 export interface IntentsDBClient {
-  async addEntity(intent: Array<Entity>): Promise<boolean>
+  async addEntities(intent: Array<Entity>): Promise<InsertManyResult<Document>>
   async addStructs(structs: Array<string>): Promise<boolean>
   async addExample(exampleKey: string, exampleValues :Array<string>): Promise<boolean>
   async appendValuesForExample(exampleKey: string, exampleValues :Array<string>): Promise<boolean>

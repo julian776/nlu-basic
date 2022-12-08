@@ -27,5 +27,8 @@
   },
   "volta": {
     "node": "16.18.1"
+  },
+  "dependencies": {
+    "mongodb": "^4.12.1"
   }
 }

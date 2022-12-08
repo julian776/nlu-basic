@@ -1,6 +1,6 @@
 import { Entity, ParamExamples } from "../../repositories/models/entity.model";
 import { Recognizer } from "../../types/nlu/recognizer/recognizer";
-import { Repository } from "../../types/nlu/repositories/entity-repository";
+import { Repository } from "../../types/repositories/entity-repository";
 import { isTheSame } from "./helpers/helpers";
 import {
   ParamsResponse,

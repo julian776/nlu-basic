@@ -1,4 +1,4 @@
-import { IntentsDBClient, Repository } from "../types/nlu/repositories/entity-repository";
+import { IntentsDBClient, Repository } from "../types/repositories/entity-repository";
 import { Entity } from "./models/entity.model";
 
 export class EntityRepository implements Repository {
