@@ -1,6 +1,6 @@
 import { Entity, ParamExamples } from "../../repositories/models/entity.model";
 import { Recognizer } from "../../types/nlu/recognizer/recognizer";
-import { Repository } from "../../types/repositories/entity-repository";
+import { NluBasicRepository } from "../../types/repositories/entity-repository";
 import { isTheSame } from "./helpers/helpers";
 import {
   ParamsResponse,
@@ -11,7 +11,10 @@ import {
 export class RecognizeText implements Recognizer {
   private minConfidence = 0.8;
 
-  constructor(private entityRepository: Repository, minConfidence = 0.8) {
+  constructor(
+    private entityRepository: NluBasicRepository,
+    minConfidence = 0.8
+  ) {
     this.updateConfidence(minConfidence);
     if (!entityRepository) {
       throw new Error("Not repository provided");
@@ -21,58 +24,51 @@ export class RecognizeText implements Recognizer {
   async recognize(
     text: string,
     strict = false
-  ): Promise<ResponseEntity | undefined> {
-    const intents = this.entityRepository.getEntities();
+  ): Promise<ResponseEntity | ResponseEntity[]> {
+    const intents = await this.entityRepository.getAllEntities();
     if (!intents) {
       throw new Error("No intents to compare");
     }
 
     const possibleAnswers = [];
     let foundedEntity;
-    intents.map(async (entity: Entity) => {
+    for (let entity of intents) {
       try {
         const intentsStruct = entity.intentsStruct;
-        foundedEntity = await Promise.race(
-          intentsStruct.map(async (struct) => {
-            const compareResult = await this.compare(
-              text,
+        for (let struct of intentsStruct) {
+          const compareResult = await this.compare(
+            text,
+            struct,
+            entity.paramExamples,
+            strict
+          );
+          if (compareResult.confidence === 1) {
+            foundedEntity = new ResponseEntity(
+              entity.intent,
+              null,
               struct,
-              entity.paramExamples,
-              strict
+              compareResult.params,
+              compareResult.confidence
             );
-            if (compareResult.confidence === 1) {
-              return Promise.resolve(
-                new ResponseEntity(
-                  entity.intent,
-                  null,
-                  struct,
-                  compareResult.params,
-                  compareResult.confidence
-                )
-              );
-            }
-            if (compareResult.confidence >= this.minConfidence) {
-              const possibleEntity = new ResponseEntity(
-                entity.intent,
-                null,
-                struct,
-                compareResult.params,
-                compareResult.confidence
-              );
-              possibleAnswers.push(possibleEntity);
-              return;
-            }
-          })
-        );
+            return foundedEntity;
+          }
+          if (compareResult.confidence >= this.minConfidence) {
+            const possibleEntity = new ResponseEntity(
+              entity.intent,
+              null,
+              struct,
+              compareResult.params,
+              compareResult.confidence
+            );
+            possibleAnswers.push(possibleEntity);
+          }
+        }
       } catch (err) {}
-    });
-
-    if (foundedEntity) {
-      return foundedEntity;
     }
+    return possibleAnswers
   }
 
-  public async compare(
+  private async compare(
     text: string,
     intentStruct: string,
     paramsExamples: ParamExamples,

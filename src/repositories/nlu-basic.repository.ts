@@ -1,9 +1,9 @@
-import { Entity } from "../repositories/models/entity.model";
-import { IntentsDBClient } from "../types/repositories/entity-repository";
+import { Entity } from "./models/entity.model";
+import { NluBasicRepository } from "../types/repositories/entity-repository";
 import { InsertManyResult, MongoClient } from "mongodb";
 import { checkArgument } from "./helpers/helpers";
 
-export class NluBasicMongoClient implements IntentsDBClient {
+export class NluBasicMongoRepository implements NluBasicRepository {
   private readonly collection;
   constructor(
     uri: string,
@@ -11,6 +11,10 @@ export class NluBasicMongoClient implements IntentsDBClient {
     collectionName = "entities"
   ) {
     this.collection = this.setUp(uri, databaseName, collectionName);
+  }
+
+  getAllEntities(): Promise<Entity[]> {
+    throw new Error("Method not implemented.");
   }
 
   setUp(uri: string, databaseName: string, collectionName: string) {
@@ -21,10 +25,12 @@ export class NluBasicMongoClient implements IntentsDBClient {
   }
 
   async addEntities(entities: Entity[]): Promise<InsertManyResult<Document>> {
-    const entitiesToAdd = await Promise.all(entities.map(async entity => {
-        this.validateEntity(entity)
-        return entity
-    }))
+    const entitiesToAdd = await Promise.all(
+      entities.map(async (entity) => {
+        this.validateEntity(entity);
+        return entity;
+      })
+    );
     return this.collection?.insertMany(entitiesToAdd);
   }
   addStructs(structs: string[]): Promise<boolean> {
@@ -33,7 +39,7 @@ export class NluBasicMongoClient implements IntentsDBClient {
   addExample(exampleKey: string, exampleValues: string[]): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  appendValuesForExample(
+  appendExampleValues(
     exampleKey: string,
     exampleValues: string[]
   ): Promise<boolean> {

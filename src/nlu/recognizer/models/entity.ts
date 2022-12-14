@@ -1,19 +1,27 @@
+/**
+ * Exporting the class ResponseEntity so that it can be used in other files.
+ * 
+ * @class
+ * @name ResponseEntity
+ * @kind class
+ * @exports
+ */
 export class ResponseEntity {
   constructor(
-    private intent: string,
-    private date: Date | null,
-    private intentStruct: string,
-    private params: ParamsResponse,
-    private confidence: number
-  ) {}  
+    public intent: string,
+    public date: Date | null,
+    public intentStruct: string,
+    public params: ParamsResponse,
+    public confidence: number
+  ) {}
 }
 
 export type ParamsResponse = {
-  [key: string]: string
-}
+  [key: string]: string;
+};
 
 export class StrictStructError extends Error {
-  constructor(message='Strict assert failed') {
-    super(message)
+  constructor(message = "Strict assert failed") {
+    super(message);
   }
 }
