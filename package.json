@@ -1,12 +1,13 @@
 {
   "name": "nlu-basic",
   "version": "1.0.0",
+  "type": "module",
   "release": {
     "repositoryUrl": "https://github.com/julian776/nlu-basic"
   },
   "description": "Nlu recognizer of some params and return intent entity",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest"
   },

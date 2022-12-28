@@ -4,10 +4,6 @@ export class Entity {
     public intentsStruct: Array<string>, //
     public paramExamples: ParamExamples
   ) {}
-
-  // addIntentsStruct(structs: Array<string>) {
-  //   this.intentsStruct = [...this.intentsStruct, ...structs]
-  // }
 }
 
 export type ParamExamples = {

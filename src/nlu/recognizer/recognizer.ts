@@ -1,4 +1,4 @@
-import { Entity, ParamExamples } from "../../repositories/models/entity.model";
+import { Entity, ParamExamples } from "../../types/repositories/models/entity.model";
 import { Recognizer } from "../../types/nlu/recognizer/recognizer";
 import { NluBasicRepository } from "../../types/repositories/entity-repository";
 import { isTheSame } from "./helpers/helpers";
@@ -8,19 +8,38 @@ import {
   StrictStructError,
 } from "./models/entity";
 
+/**
+ * Creating a class called RecognizeText that implements the Recognizer interface.
+ * @public
+ * @class
+ * @name RecognizeText
+ * @kind class
+ * @implements Recognizer
+ * @exports
+ */
 export class RecognizeText implements Recognizer {
   private minConfidence = 0.8;
+  private entityRepository!: NluBasicRepository;
 
   constructor(
-    private entityRepository: NluBasicRepository,
     minConfidence = 0.8
   ) {
     this.updateConfidence(minConfidence);
-    if (!entityRepository) {
-      throw new Error("Not repository provided");
-    }
   }
 
+
+  /**
+   * Try to recognize a given text with the database provided by a repository.
+   * 
+   * @async
+   * @method
+   * @name recognize
+   * @kind method
+   * @memberof RecognizeText
+   * @param {string} text
+   * @param {boolean} strict?
+   * @returns {Promise<ResponseEntity | ResponseEntity[]>}
+   */
   async recognize(
     text: string,
     strict = false
@@ -104,6 +123,13 @@ export class RecognizeText implements Recognizer {
       confidence: this.checkConfidence(coincidences, arrayCoincidences),
       params: paramsAcc,
     };
+  }
+
+  train(entityRepository: NluBasicRepository) {
+    if (!entityRepository) {
+      throw new Error("Not repository provided");
+    }
+    this.entityRepository = entityRepository
   }
 
   private checkConfidence(

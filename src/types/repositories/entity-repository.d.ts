@@ -1,9 +1,7 @@
-import { Entity } from "../../../nlu/repositories/models/entity.model";
-
 export interface NluBasicRepository {
   //saveEntity(text: string): Entity;
   getAllEntities(): Promise<Array<Entity>>;
-  addEntities(intent: Array<Entity>): Promise<InsertManyResult<Document>>;
+  addEntities(intent: Array<Entity>): Promise<any>;
   addStructs(structs: Array<string>): Promise<boolean>;
   addExample(
     exampleKey: string,

@@ -1,7 +1,12 @@
 /*test/
 
+api-extractor.json
+
 .gitignore
+.npmignore
 
 tsconfig*
-
 jest.config*
+
+/etc/
+/node_modules/

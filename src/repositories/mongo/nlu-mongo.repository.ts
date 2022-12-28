@@ -1,8 +1,18 @@
-import { Entity } from "./models/entity.model";
-import { NluBasicRepository } from "../types/repositories/entity-repository";
+import { Entity } from "../../types/repositories/models/entity.model";
+import { NluBasicRepository } from "../../types/repositories/entity-repository";
 import { InsertManyResult, MongoClient } from "mongodb";
-import { checkArgument } from "./helpers/helpers";
+import { checkArgument } from "../helpers/helpers";
 
+/**
+ * Creating a class that implements the NluBasicRepository interface.
+ * 
+ * @public
+ * @class
+ * @name NluBasicMongoRepository
+ * @kind class
+ * @implements NluBasicRepository
+ * @exports
+ */
 export class NluBasicMongoRepository implements NluBasicRepository {
   private readonly collection;
   constructor(
@@ -46,7 +56,7 @@ export class NluBasicMongoRepository implements NluBasicRepository {
     throw new Error("Method not implemented.");
   }
 
-  validateEntity(entity: Entity) {
+  private validateEntity(entity: Entity) {
     checkArgument(
       !entity.intent,
       "Not possible to insert a entity with no intent"
