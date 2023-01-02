@@ -5,7 +5,7 @@ import { checkArgument } from "../helpers/helpers";
 
 /**
  * Creating a class that implements the NluBasicRepository interface.
- * 
+ *
  * @public
  * @class
  * @name NluBasicMongoRepository
@@ -43,12 +43,30 @@ export class NluBasicMongoRepository implements NluBasicRepository {
     );
     return this.collection?.insertMany(entitiesToAdd);
   }
-  addStructs(structs: string[]): Promise<boolean> {
-    throw new Error("Method not implemented.");
+  async addStructs(intent: string, structs: string[]): Promise<boolean> {
+    const entity = await this.collection.findOne({ intent });
+    if (entity) {
+      entity.intentsStruct.push(...structs);
+      this.collection.updateOne({ entity }, { entity });
+      return true;
+    }
+    return false;
   }
-  addExample(exampleKey: string, exampleValues: string[]): Promise<boolean> {
-    throw new Error("Method not implemented.");
+
+  async addExamples(
+    intent: string,
+    exampleKey: string,
+    exampleValues: string[]
+  ): Promise<boolean> {
+    const entity = await this.collection.findOne({ intent });
+    if (entity) {
+      entity.paramExamples[exampleKey].push(...exampleValues);
+      this.collection.updateOne({entity}, {entity})
+      return true;
+    }
+    return false;
   }
+
   appendExampleValues(
     exampleKey: string,
     exampleValues: string[]
