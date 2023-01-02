@@ -4,8 +4,8 @@ import { InsertManyResult, MongoClient } from "mongodb";
 import { checkArgument } from "../helpers/helpers";
 
 /**
- * Creating a class that implements the NluBasicRepository interface.
- * 
+ * Entity local repository.
+ *
  * @public
  * @class
  * @name NluBasicMongoRepository
@@ -14,21 +14,14 @@ import { checkArgument } from "../helpers/helpers";
  * @exports
  */
 export class NluBasicLocalRepository implements NluBasicRepository {
-  private entities: Entity[]
-    constructor(entities: Entity[]) {
-        this.entities = []
-        this.addEntities(entities)
-    }
-
-  getAllEntities(): Promise<Entity[]> {
-    throw new Error("Method not implemented.");
+  private entities: { [key: string]: Entity };
+  constructor(entities: Entity[]) {
+    this.entities = {};
+    this.addEntities(entities);
   }
 
-  setUp(uri: string, databaseName: string, collectionName: string) {
-    const client = new MongoClient(uri);
-    const database = client.db(databaseName);
-    const collection = database.collection(collectionName);
-    return collection;
+  async getAllEntities(): Promise<Entity[]> {
+    return Object.values(this.entities);
   }
 
   async addEntities(entities: Entity[]): Promise<boolean> {
@@ -38,16 +31,31 @@ export class NluBasicLocalRepository implements NluBasicRepository {
         return entity;
       })
     );
-    this.entities = entitiesToAdd
+
+    entitiesToAdd.map((entity) => {
+      if (entity) this.entities[entity.intent] = entity;
+    });
+    return true;
+  }
+
+  async addStructs(intent: string, structs: string[]): Promise<boolean> {
+    const entity = this.entities[intent]
+    entity.intentsStruct.push(...structs)
+    this.entities[intent] = entity
+    return true
+  }
+
+  async addExamples(
+    intent: string,
+    exampleKey: string,
+    exampleValues: string[]
+  ): Promise<boolean> {
+    const entity = this.entities[intent]
+    entity.paramExamples[exampleKey].push(...exampleValues)
+    this.entities[intent] = entity
     return true
   }
   
-  addStructs(structs: string[]): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
-  addExample(exampleKey: string, exampleValues: string[]): Promise<boolean> {
-    throw new Error("Method not implemented.");
-  }
   appendExampleValues(
     exampleKey: string,
     exampleValues: string[]

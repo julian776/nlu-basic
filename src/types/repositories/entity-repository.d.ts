@@ -2,8 +2,9 @@ export interface NluBasicRepository {
   //saveEntity(text: string): Entity;
   getAllEntities(): Promise<Array<Entity>>;
   addEntities(intent: Array<Entity>): Promise<any>;
-  addStructs(structs: Array<string>): Promise<boolean>;
-  addExample(
+  addStructs(intent:string, structs: Array<string>): Promise<boolean>;
+  addExamples(
+    intent:string,
     exampleKey: string,
     exampleValues: Array<string>
   ): Promise<boolean>;
