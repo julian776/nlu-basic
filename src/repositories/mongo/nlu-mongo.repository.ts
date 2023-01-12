@@ -1,6 +1,6 @@
 import { Entity } from "../../types/repositories/models/entity.model";
 import { NluBasicRepository } from "../../types/repositories/entity-repository";
-import { InsertManyResult, MongoClient } from "mongodb";
+import { Document, InsertManyResult, MongoClient } from "mongodb";
 import { checkArgument } from "../helpers/helpers";
 
 /**

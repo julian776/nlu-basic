@@ -6,8 +6,8 @@
     "repositoryUrl": "https://github.com/julian776/nlu-basic"
   },
   "description": "Nlu recognizer of some params and return intent entity",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/nlu-basic.js",
+  "types": "lib/nlu-basic.d.ts",
   "scripts": {
     "test": "jest"
   },
