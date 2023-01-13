@@ -9,7 +9,7 @@ import { Entity } from "../../types/repositories/models/entity.model";
 
 const { NluBasicMongoRepository } = jest.createMockFromModule<
   typeof import("../../repositories/mongo/nlu-mongo.repository")
->("../../repositories/nlu-basic.repository");
+>("../../repositories/mongo/nlu-mongo.repository");
 
 describe("Recognizer test", () => {
   afterAll(() => {
@@ -37,7 +37,7 @@ describe("Recognizer test", () => {
     const text = "I need shirts info";
     const struct = "{pronoun} {need} shirts {info}";
     const params = {
-      greet: ["I", "me"],
+      pronoun: ["I", "me"],
       need: ["need", "like"],
       info: ["info", "information", "brochure", "pdf"],
     };

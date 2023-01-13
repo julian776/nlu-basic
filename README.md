@@ -52,29 +52,32 @@ confidence: number
 First you should initialize your mongodb. (If you use Docker you can run docker-compose file provided in official repo https://github.com/julian776/nlu-basic)
 
 ```typescript
+import { Entity, NluBasicLocalRepository, RecognizeText } from "nlu-basic";
+
 const text = "I need shirts info";
 const struct = "{pronoun} {need} shirts {info}";
-    const params = {
-      greet: ["I", "me"],
-      need: ["need", "like"],
-      info: ["info", "information", "brochure", "pdf"],
-    };
-    
-    // Repo
-    const entityRepository = new NluBasicMongoRepository("uriTest");
-    const entity = new Entity('Info Shirts', [struct], params) 
-    entityRepository.addEntities([entity])
+const params = {
+    pronoun: ["I", "me"],
+    need: ["need", "like"],
+    info: ["info", "information", "brochure", "pdf"],
+};
 
-    // Recognizer
-    const recognizer = new RecognizeText();
-    recognizer.train(entityRepository)
-    const response = await recognizer.recognize(text);
-    
-    if (Array.isArray(response)) {
-        response.map(console.log)
-    } else {
-        console.log(response)
-    }
+// Repo
+const entity = new Entity("Info Shirts", [struct], params);
+//console.log(!entity.intent);
+const entityRepository = new NluBasicLocalRepository();
+await entityRepository.addEntities([entity])
+
+// Recognizer
+const recognizer = new RecognizeText();
+recognizer.train(entityRepository);
+const response = await recognizer.recognize(text);
+
+if (Array.isArray(response)) {
+    response.map(entity => console.log(entity));
+} else {
+    console.log(response);
+}
 ```
 
 ```typescript

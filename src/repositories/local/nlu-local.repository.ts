@@ -1,7 +1,6 @@
 import { Entity } from "../../types/repositories/models/entity.model";
 import { NluBasicRepository } from "../../types/repositories/entity-repository";
-import { InsertManyResult, MongoClient } from "mongodb";
-import { checkArgument } from "../helpers/helpers";
+import { validateEntity } from "../helpers/helpers";
 
 /**
  * Entity local repository.
@@ -15,26 +14,29 @@ import { checkArgument } from "../helpers/helpers";
  */
 export class NluBasicLocalRepository implements NluBasicRepository {
   private entities: { [key: string]: Entity };
-  constructor(entities: Entity[]) {
+  constructor() {
     this.entities = {};
-    this.addEntities(entities);
   }
 
   async getAllEntities(): Promise<Entity[]> {
-    return Object.values(this.entities);
+    const entities = Object.values(this.entities);
+    
+    return entities 
   }
 
   async addEntities(entities: Entity[]): Promise<boolean> {
     const entitiesToAdd = await Promise.all(
       entities.map(async (entity) => {
-        this.validateEntity(entity);
+        validateEntity(entity);
         return entity;
       })
     );
 
-    entitiesToAdd.map((entity) => {
-      if (entity) this.entities[entity.intent] = entity;
-    });
+    await Promise.all(entitiesToAdd.map((entity) => {
+      if (entity) {        
+        this.entities[entity.intent] = entity;
+      }
+    }));
     return true;
   }
 
@@ -61,25 +63,5 @@ export class NluBasicLocalRepository implements NluBasicRepository {
     exampleValues: string[]
   ): Promise<boolean> {
     throw new Error("Method not implemented.");
-  }
-
-  private validateEntity(entity: Entity) {
-    checkArgument(
-      !entity.intent,
-      "Not possible to insert a entity with no intent"
-    );
-    checkArgument(
-      typeof entity.intentsStruct !== "object",
-      "Intents structs should be an array"
-    );
-    checkArgument(
-      entity.intentsStruct.length < 1,
-      "Entity needs at least one struct"
-    );
-    checkArgument(
-      typeof entity.paramExamples === "object",
-      "Param Examples should be an object"
-    );
-    return true;
   }
 }

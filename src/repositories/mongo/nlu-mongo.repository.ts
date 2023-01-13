@@ -1,7 +1,7 @@
 import { Entity } from "../../types/repositories/models/entity.model";
 import { NluBasicRepository } from "../../types/repositories/entity-repository";
 import { Document, InsertManyResult, MongoClient } from "mongodb";
-import { checkArgument } from "../helpers/helpers";
+import { checkArgument, validateEntity } from "../helpers/helpers";
 
 /**
  * Creating a class that implements the NluBasicRepository interface.
@@ -37,7 +37,7 @@ export class NluBasicMongoRepository implements NluBasicRepository {
   async addEntities(entities: Entity[]): Promise<InsertManyResult<Document>> {
     const entitiesToAdd = await Promise.all(
       entities.map(async (entity) => {
-        this.validateEntity(entity);
+        validateEntity(entity);
         return entity;
       })
     );
@@ -72,25 +72,5 @@ export class NluBasicMongoRepository implements NluBasicRepository {
     exampleValues: string[]
   ): Promise<boolean> {
     throw new Error("Method not implemented.");
-  }
-
-  private validateEntity(entity: Entity) {
-    checkArgument(
-      !entity.intent,
-      "Not possible to insert a entity with no intent"
-    );
-    checkArgument(
-      typeof entity.intentsStruct !== "object",
-      "Intents structs should be an array"
-    );
-    checkArgument(
-      entity.intentsStruct.length < 1,
-      "Entity needs at least one struct"
-    );
-    checkArgument(
-      typeof entity.paramExamples === "object",
-      "Param Examples should be an object"
-    );
-    return true;
   }
 }

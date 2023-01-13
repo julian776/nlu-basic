@@ -20,5 +20,4 @@ export declare class NluBasicMongoRepository implements NluBasicRepository {
     addStructs(intent: string, structs: string[]): Promise<boolean>;
     addExamples(intent: string, exampleKey: string, exampleValues: string[]): Promise<boolean>;
     appendExampleValues(exampleKey: string, exampleValues: string[]): Promise<boolean>;
-    private validateEntity;
 }

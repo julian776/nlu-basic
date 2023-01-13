@@ -27,7 +27,6 @@ export class RecognizeText implements Recognizer {
     this.updateConfidence(minConfidence);
   }
 
-
   /**
    * Try to recognize a given text with the database provided by a repository.
    * 
@@ -45,7 +44,8 @@ export class RecognizeText implements Recognizer {
     strict = false
   ): Promise<ResponseEntity | ResponseEntity[]> {
     const intents = await this.entityRepository.getAllEntities();
-    if (!intents) {
+    
+    if (!intents || intents.length === 0) {
       throw new Error("No intents to compare");
     }
 
@@ -61,6 +61,7 @@ export class RecognizeText implements Recognizer {
             entity.paramExamples,
             strict
           );
+          
           if (compareResult.confidence === 1) {
             foundedEntity = new ResponseEntity(
               entity.intent,
@@ -82,7 +83,7 @@ export class RecognizeText implements Recognizer {
             possibleAnswers.push(possibleEntity);
           }
         }
-      } catch (err) {}
+      } catch (err: any) {}
     }
     return possibleAnswers
   }
@@ -170,8 +171,8 @@ export class RecognizeText implements Recognizer {
     };
     if (structWord.includes("{") && structWord.includes("}")) {
       const param = structWord.replace(/[\{\}]+/g, "");
-      const paramExample = paramsExamples[param];
-      const isParam = this.validateParam(textWord, paramExample);
+      const paramExamples = paramsExamples[param];
+      const isParam = this.validateParam(textWord, paramExamples);
       if (isParam) {
         responseValidated.paramsAcc[param] = textWord;
         responseValidated.hasCoincidence = true;
