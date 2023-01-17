@@ -25,19 +25,23 @@ export class NluBasicLocalRepository implements NluBasicRepository {
   }
 
   async addEntities(entities: Entity[]): Promise<boolean> {
-    const entitiesToAdd = await Promise.all(
-      entities.map(async (entity) => {
-        validateEntity(entity);
-        return entity;
-      })
-    );
-
-    await Promise.all(entitiesToAdd.map((entity) => {
-      if (entity) {        
-        this.entities[entity.intent] = entity;
-      }
-    }));
-    return true;
+    try {
+      const entitiesToAdd = await Promise.all(
+        entities.map(async (entity) => {
+          validateEntity(entity);
+          return entity;
+        })
+      );
+  
+      await Promise.all(entitiesToAdd.map((entity) => {
+        if (entity) {        
+          this.entities[entity.intent] = entity;
+        }
+      }));
+      return true;
+    } catch (err) {
+      return false
+    }
   }
 
   async addStructs(intent: string, structs: string[]): Promise<boolean> {

@@ -12,7 +12,7 @@ import { NluBasicRepository } from "../../types/repositories/entity-repository";
  */
 export declare class NluBasicLocalRepository implements NluBasicRepository {
     private entities;
-    constructor(entities: Entity[]);
+    constructor();
     getAllEntities(): Promise<Entity[]>;
     addEntities(entities: Entity[]): Promise<boolean>;
     addStructs(intent: string, structs: string[]): Promise<boolean>;

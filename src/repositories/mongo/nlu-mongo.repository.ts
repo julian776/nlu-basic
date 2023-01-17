@@ -1,7 +1,7 @@
 import { Entity } from "../../types/repositories/models/entity.model";
 import { NluBasicRepository } from "../../types/repositories/entity-repository";
 import { Document, InsertManyResult, MongoClient } from "mongodb";
-import { checkArgument, validateEntity } from "../helpers/helpers";
+import { validateEntity } from "../helpers/helpers";
 
 /**
  * Creating a class that implements the NluBasicRepository interface.
@@ -23,8 +23,8 @@ export class NluBasicMongoRepository implements NluBasicRepository {
     this.collection = this.setUp(uri, databaseName, collectionName);
   }
 
-  getAllEntities(): Promise<Entity[]> {
-    throw new Error("Method not implemented.");
+  async getAllEntities(): Promise<any> { //Document[]
+    return this.collection.find({})
   }
 
   setUp(uri: string, databaseName: string, collectionName: string) {

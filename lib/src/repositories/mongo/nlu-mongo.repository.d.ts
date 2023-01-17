@@ -14,7 +14,7 @@ import { Document, InsertManyResult } from "mongodb";
 export declare class NluBasicMongoRepository implements NluBasicRepository {
     private readonly collection;
     constructor(uri: string, databaseName?: string, collectionName?: string);
-    getAllEntities(): Promise<Entity[]>;
+    getAllEntities(): Promise<any>;
     setUp(uri: string, databaseName: string, collectionName: string): import("mongodb").Collection<Document>;
     addEntities(entities: Entity[]): Promise<InsertManyResult<Document>>;
     addStructs(intent: string, structs: string[]): Promise<boolean>;

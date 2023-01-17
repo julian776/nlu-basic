@@ -5,29 +5,63 @@
 ```ts
 
 import { Collection } from 'mongodb';
-import { Document as Document_2 } from 'mongodb';
+import { Document } from 'mongodb';
 import { InsertManyResult } from 'mongodb';
-import { NluBasicRepository } from '../../types/repositories/entity-repository';
+import { NluBasicRepository } from './src/types/repositories/entity-repository';
+import { NluBasicRepository as NluBasicRepository_2 } from '../../types/repositories/entity-repository';
 import { Recognizer } from '../../types/nlu/recognizer/recognizer';
 
+// @public (undocumented)
+export class Entity {
+    constructor(intent: string, //infoCamisas
+    intentsStruct: Array<string>, //
+    paramExamples: ParamExamples);
+    // (undocumented)
+    readonly intent: string;
+    // (undocumented)
+    intentsStruct: Array<string>;
+    // (undocumented)
+    paramExamples: ParamExamples;
+}
+
 // @public
-export class NluBasicMongoRepository implements NluBasicRepository {
+export class NluBasicLocalRepository implements NluBasicRepository_2 {
+    constructor(entities: Entity[]);
+    // (undocumented)
+    addEntities(entities: Entity[]): Promise<boolean>;
+    // (undocumented)
+    addExamples(intent: string, exampleKey: string, exampleValues: string[]): Promise<boolean>;
+    // (undocumented)
+    addStructs(intent: string, structs: string[]): Promise<boolean>;
+    // (undocumented)
+    appendExampleValues(exampleKey: string, exampleValues: string[]): Promise<boolean>;
+    // (undocumented)
+    getAllEntities(): Promise<Entity[]>;
+}
+
+// @public
+export class NluBasicMongoRepository implements NluBasicRepository_2 {
     constructor(uri: string, databaseName?: string, collectionName?: string);
     // (undocumented)
     addEntities(entities: Entity[]): Promise<InsertManyResult<Document>>;
     // (undocumented)
-    addExample(exampleKey: string, exampleValues: string[]): Promise<boolean>;
+    addExamples(intent: string, exampleKey: string, exampleValues: string[]): Promise<boolean>;
     // (undocumented)
-    addStructs(structs: string[]): Promise<boolean>;
+    addStructs(intent: string, structs: string[]): Promise<boolean>;
     // (undocumented)
     appendExampleValues(exampleKey: string, exampleValues: string[]): Promise<boolean>;
-    // Warning: (ae-forgotten-export) The symbol "Entity" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     getAllEntities(): Promise<Entity[]>;
     // (undocumented)
-    setUp(uri: string, databaseName: string, collectionName: string): Collection<Document_2>;
+    setUp(uri: string, databaseName: string, collectionName: string): Collection<Document>;
 }
+
+export { NluBasicRepository }
+
+// @public (undocumented)
+export type ParamExamples = {
+    [key: string]: Array<string>;
+};
 
 // @public
 export class RecognizeText implements Recognizer {
@@ -36,12 +70,28 @@ export class RecognizeText implements Recognizer {
     getConfidence(): number;
     // (undocumented)
     getDateFromText(text: string): Date;
-    // Warning: (ae-forgotten-export) The symbol "ResponseEntity" needs to be exported by the entry point index.d.ts
     recognize(text: string, strict?: boolean): Promise<ResponseEntity | ResponseEntity[]>;
     // (undocumented)
-    train(entityRepository: NluBasicRepository): void;
+    train(entityRepository: NluBasicRepository_2): void;
     // (undocumented)
     updateConfidence(newConfidence: number): void;
+}
+
+// @public
+export class ResponseEntity {
+    constructor(intent: string, date: Date | null, intentStruct: string, params: ParamsResponse, confidence: number);
+    // (undocumented)
+    confidence: number;
+    // (undocumented)
+    date: Date | null;
+    // (undocumented)
+    intent: string;
+    // (undocumented)
+    intentStruct: string;
+    // Warning: (ae-forgotten-export) The symbol "ParamsResponse" needs to be exported by the entry point nlu-basic.d.ts
+    //
+    // (undocumented)
+    params: ParamsResponse;
 }
 
 // (No @packageDocumentation comment for this package)
