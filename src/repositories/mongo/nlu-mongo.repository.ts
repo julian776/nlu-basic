@@ -24,7 +24,7 @@ export class NluBasicMongoRepository implements NluBasicRepository {
   }
 
   async getAllEntities(): Promise<any> { //Document[]
-    return this.collection.find({})
+    return this.collection.find({}).toArray()
   }
 
   setUp(uri: string, databaseName: string, collectionName: string) {

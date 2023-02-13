@@ -2,11 +2,11 @@
 
 Basic package to recognize dynamic sentences.
 
-This library is created for a easy implementation to test a sentence and get the parameters.
+Created for a easy implementation. Test a given sentence and get the parameters.
 You can define an intent with many examples as you need.
 Is not real ML but it will be usefull in many usecases where you need a fast implementation without advanced knowledge on AI.
 
-## Quickstart
+## Quickstart Local Repo
 ```typescript
 import { Entity, NluBasicLocalRepository, RecognizeText } from "nlu-basic";
 
@@ -30,9 +30,50 @@ recognizer.train(entityRepository);
 const response = await recognizer.recognize(text);
 
 if (Array.isArray(response)) {
-    response.map(entity => console.log(entity));
+    response.forEach(entity => console.log(entity));
 } else {
     console.log(response);
+}
+```
+
+## Quickstart Mongo Repo
+```typescript
+import { RecognizeText, NluBasicMongoRepository, Entity } from 'nlu-basic'
+
+const text = "I need shirts info";
+const struct = "{pronoun} {need} shirts {info}";
+const params = {
+    pronoun: ["I", "me"],
+    need: ["need", "like"],
+    info: ["info", "information", "brochure", "pdf"],
+};
+
+const entity = new Entity("Info Shirts", [struct], params);
+
+// Repo
+const entityRepository = new NluBasicMongoRepository('mongodb://localhost:27017')
+await entityRepository.addEntities([entity])
+
+// Recognizer
+const recognizer = new RecognizeText();
+recognizer.train(entityRepository);
+const response = await recognizer.recognize(text);
+
+if (Array.isArray(response)) {
+    response.forEach(entity => console.log(entity));
+} else {
+    console.log(response);
+}
+```
+
+## Response expected on quick start
+```typescript
+ResponseEntity {
+  intent: 'Info Shirts',
+  date: null,
+  intentStruct: '{pronoun} {need} shirts {info}',
+  params: { pronoun: 'I', need: 'need', info: 'info' },
+  confidence: 1
 }
 ```
 
@@ -74,10 +115,10 @@ recognizer.updateConfidence(0.87) // 87% minConfidence
 The response object can be an array or a unique answer with the shape.
 ```typescript
 intent: string, // Wich intent is the text associated in repo
-date: Date | null, // Date if there can be identified one
+date: Date | null, // Date if there can be identified one (Not supported now)
 intentStruct: string, // Struct that makes match with the text
 params: ParamsResponse, // Params as object identified with struct
-confidence: number
+confidence: number // Between 0 and 1 
 ```
 
 ### NluBasicRepository
@@ -89,7 +130,3 @@ To initialize the NluBasicMongoRepository you have to provide a uri connection s
 const entityRepository = new NluBasicMongoRepository("uriTest");
 ```
 After initialize your repo you can add entities.
-
-## Warning
-
-This library is not tested with large data sets of structures. You should consider this on your use case.
