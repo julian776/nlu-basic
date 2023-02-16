@@ -1,6 +1,6 @@
 {
   "name": "nlu-basic",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "type": "commonjs",
   "repository": {
     "type": "git",
@@ -11,6 +11,7 @@
   "module": "lib/nlu-basic.js",
   "types": "lib/nlu-basic.d.ts",
   "scripts": {
+    "publish": "pnpm tsc && npm publish",
     "test": "jest"
   },
   "keywords": [

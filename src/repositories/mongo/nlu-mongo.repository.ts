@@ -1,6 +1,6 @@
 import { Entity } from "../../types/repositories/models/entity.model";
 import { NluBasicRepository } from "../../types/repositories/entity-repository";
-import { Document, InsertManyResult, MongoClient } from "mongodb";
+import { Document, InsertManyResult, MongoClient, ObjectId } from "mongodb";
 import { validateEntity } from "../helpers/helpers";
 
 /**
@@ -23,8 +23,8 @@ export class NluBasicMongoRepository implements NluBasicRepository {
     this.collection = this.setUp(uri, databaseName, collectionName);
   }
 
-  async getAllEntities(): Promise<any> { //Document[]
-    return this.collection.find({}).toArray()
+  async getAllEntities(): Promise<any> {
+    return this.collection.find({}).toArray();
   }
 
   setUp(uri: string, databaseName: string, collectionName: string) {
@@ -47,7 +47,11 @@ export class NluBasicMongoRepository implements NluBasicRepository {
     const entity = await this.collection.findOne({ intent });
     if (entity) {
       entity.intentsStruct.push(...structs);
-      this.collection.updateOne({ entity }, { entity });
+      this.collection.updateOne(
+        { _id: new ObjectId(entity._id) },
+        { $push: { intentsStruct: entity.intentsStruct } },
+        { upsert: true }
+      );
       return true;
     }
     return false;
@@ -61,7 +65,12 @@ export class NluBasicMongoRepository implements NluBasicRepository {
     const entity = await this.collection.findOne({ intent });
     if (entity) {
       entity.paramExamples[exampleKey].push(...exampleValues);
-      this.collection.updateOne({entity}, {entity})
+      
+      this.collection.updateOne(
+        { _id: new ObjectId(entity._id) },
+        { $set: { paramExamples: entity.paramExamples } },
+        { upsert: true }
+      );
       return true;
     }
     return false;

@@ -6,3 +6,6 @@ services:
       - 27017:27017
     volumes:
       - nlu-basic-data:/data/db
+
+volumes:
+  nlu-basic-data:

@@ -129,4 +129,17 @@ To initialize the NluBasicMongoRepository you have to provide a uri connection s
 ```typescript
 const entityRepository = new NluBasicMongoRepository("uriTest");
 ```
-After initialize your repo you can add entities.
+
+# MongoRepo Config
+When initialize you can pass three parameters directly on the constructor on calling the setUp method.
+
+```typescript
+const entityRepository = new NluBasicMongoRepository(uri: string, databaseName: string, collectionName: string);
+
+// Or
+entityRepository.setUp(uri: string, databaseName: string, collectionName: string)
+```
+
+If not passed the default values are
+* databaseName = "nlu-basic" 
+* collectionName = "entities"

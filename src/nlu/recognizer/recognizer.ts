@@ -190,17 +190,4 @@ export class RecognizeText implements Recognizer {
   public getDateFromText(text: string): Date {
     return new Date();
   }
-
-  private createResponseEntity(intent: string) {
-    //return new Entity()
-  }
 }
-
-// const paramsWithIndex = structWords.reduce((acc, currWord, index) => {
-//   if (currWord.includes('{') && currWord.includes('}')) {
-//     const param = currWord.replace(/[\{\}]+/g, '')
-//     return [...acc, [param, index]]
-//   }
-//   return acc
-// }, <any>[])
-// console.log(paramsWithIndex)
