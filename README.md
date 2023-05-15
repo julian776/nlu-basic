@@ -2,9 +2,9 @@
 
 Basic package to recognize dynamic sentences.
 
-Created for a easy implementation. Test a given sentence and get the parameters.
+Created for easy implementation. Test a given sentence and get the parameters.
 You can define an intent with many examples as you need.
-Is not real ML but it will be usefull in many usecases where you need a fast implementation without advanced knowledge on AI.
+Is not real ML but it will be useful in many use cases where you need a fast implementation without advanced knowledge of AI.
 
 # Quickstart Local Repo
 ```typescript
@@ -76,10 +76,23 @@ ResponseEntity {
   confidence: 1
 }
 ```
+# Concepts
+
+# Params
+Params are a set of words that can be replaced between them.
+Example dad and father.
+Both words can mean the same in a given context.
+
+# Structs
+Struct is a sentence that can be customized to get or catch different sentences. You can create one mixing params and words.
+Example `create a {post}` where post param can be defined as
+```typescript
+const post = ["post", "blog", "new"]
+```
 
 # How to Use
 
-You should define a NluBasicRepository and the RecognizeText. By default nlu-basic provides a mongo repository implementation "NluBasicMongoRepository". You can define other repository if you like. To define a custom repository you have to match "NluBasicRepository" interface with api reference and it will works as expected. Feel free to make experiments.
+You should define a `NluBasicRepository` and the `RecognizeText`. By default, nlu-basic provides a Mongo repository implementation `NluBasicMongoRepository`. You can define another repository if you like. To define a custom repository you have to match the `NluBasicRepository` interface with API reference and it will work as expected. Feel free to make experiments.
 
 # Recognizer
 The core of the library is the recognizer so you can define it as.
@@ -92,7 +105,7 @@ After you define the recognizer you should train it by giving a repo.
 ```typescript
 recognizer.train(entityRepository)
 ```
-This way to give the repo makes possible to have different repos and optimize your app. You can define each repo to check different kind of sentences. For example a repo for sales and other to support questions.
+This way giving the repo makes it possible to have different repos and optimize your app. You can define each repo to check different kinds of sentences. For example a repo for sales and others to support questions.
 
 
 After you can try to recognize a sentence with.
@@ -101,22 +114,22 @@ After you can try to recognize a sentence with.
 const response = await recognizer.recognize(someText);
 ```
 
-When the recognizer finds a 1(100%) confidence it returns one object but when it can not finds a 100% match it will add to the response any sentence that the confidence is greater than minConfidence parameter.
+When the recognizer finds a 1(100%) confidence it returns one object but when it can not find a 100% match it will add to the response any sentence that the confidence is greater than minConfidence parameter.
 # Min Confidence
-Is the minium confidence that is acceptable. You can update it when creating the Recognizer or use the updateConfidence method.
+Is the minimum confidence that is acceptable. You can update it when creating the Recognizer or use the updateConfidence method.
 ```typescript
 const recognizer = new RecognizeText(0.95); // 95% minConfidence
 
-// Or by method
+// Or by the method
 recognizer.updateConfidence(0.87) // 87% minConfidence
 ```
 
 # Response
-The response object can be an array or a unique answer with the shape.
+The response object can be an array or a unique answer with a shape.
 ```typescript
-intent: string, // Wich intent is the text associated in repo
+intent: string, // Wich intent is the text associated in the repo
 date: Date | null, // Date if there can be identified one (Not supported now)
-intentStruct: string, // Struct that makes match with the text
+intentStruct: string, // Struct that makes a match with the text
 params: ParamsResponse, // Params as object identified with struct
 confidence: number // Between 0 and 1 
 ```
@@ -124,14 +137,14 @@ confidence: number // Between 0 and 1
 # NluBasicRepository
 
 You should define a NluBasicRepository or use the default NluBasicMongoRepository.
-To initialize the NluBasicMongoRepository you have to provide a uri connection string of mongo.
+To initialize the NluBasicMongoRepository you have to provide a URI connection string of mongo.
 
 ```typescript
 const entityRepository = new NluBasicMongoRepository("uriTest");
 ```
 
 # MongoRepo Config
-When initialize you can pass three parameters directly on the constructor on calling the setUp method.
+When initialize you can pass three parameters directly on the constructor by calling the setUp method.
 
 ```typescript
 const entityRepository = new NluBasicMongoRepository(uri: string, databaseName: string, collectionName: string);
