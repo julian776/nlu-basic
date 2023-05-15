@@ -6,7 +6,7 @@ Created for a easy implementation. Test a given sentence and get the parameters.
 You can define an intent with many examples as you need.
 Is not real ML but it will be usefull in many usecases where you need a fast implementation without advanced knowledge on AI.
 
-## Quickstart Local Repo
+# Quickstart Local Repo
 ```typescript
 import { Entity, NluBasicLocalRepository, RecognizeText } from "nlu-basic";
 
@@ -36,7 +36,7 @@ if (Array.isArray(response)) {
 }
 ```
 
-## Quickstart Mongo Repo
+# Quickstart Mongo Repo
 ```typescript
 import { RecognizeText, NluBasicMongoRepository, Entity } from 'nlu-basic'
 
@@ -66,7 +66,7 @@ if (Array.isArray(response)) {
 }
 ```
 
-## Response expected on quick start
+# Response expected on quick start
 ```typescript
 ResponseEntity {
   intent: 'Info Shirts',
@@ -77,11 +77,11 @@ ResponseEntity {
 }
 ```
 
-## How to Use
+# How to Use
 
 You should define a NluBasicRepository and the RecognizeText. By default nlu-basic provides a mongo repository implementation "NluBasicMongoRepository". You can define other repository if you like. To define a custom repository you have to match "NluBasicRepository" interface with api reference and it will works as expected. Feel free to make experiments.
 
-### Recognizer
+# Recognizer
 The core of the library is the recognizer so you can define it as.
 
 ```typescript
@@ -102,7 +102,7 @@ const response = await recognizer.recognize(someText);
 ```
 
 When the recognizer finds a 1(100%) confidence it returns one object but when it can not finds a 100% match it will add to the response any sentence that the confidence is greater than minConfidence parameter.
-##### Min Confidence
+# Min Confidence
 Is the minium confidence that is acceptable. You can update it when creating the Recognizer or use the updateConfidence method.
 ```typescript
 const recognizer = new RecognizeText(0.95); // 95% minConfidence
@@ -111,7 +111,7 @@ const recognizer = new RecognizeText(0.95); // 95% minConfidence
 recognizer.updateConfidence(0.87) // 87% minConfidence
 ```
 
-### Response
+# Response
 The response object can be an array or a unique answer with the shape.
 ```typescript
 intent: string, // Wich intent is the text associated in repo
@@ -121,7 +121,7 @@ params: ParamsResponse, // Params as object identified with struct
 confidence: number // Between 0 and 1 
 ```
 
-### NluBasicRepository
+# NluBasicRepository
 
 You should define a NluBasicRepository or use the default NluBasicMongoRepository.
 To initialize the NluBasicMongoRepository you have to provide a uri connection string of mongo.

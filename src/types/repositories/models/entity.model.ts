@@ -1,7 +1,12 @@
 export class Entity {
   constructor(
-    public readonly intent: string, //infoCamisas
-    public intentsStruct: Array<string>, //
+    // eg: novelBooks
+    public readonly intent: string,
+    
+    // eg: ["book with {monsters}"]
+    public intentsStruct: Array<string>,
+
+    // eg: {monsters: ["big foot", "your sister", "other monster"]}
     public paramExamples: ParamExamples
   ) {}
 }
