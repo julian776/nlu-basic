@@ -76,83 +76,72 @@ ResponseEntity {
   confidence: 1
 }
 ```
-# Concepts
+# NLU Basic Concepts
 
-# Params
-Params are a set of words that can be replaced between them.
-Example dad and father.
-Both words can mean the same in a given context.
+## Params
+Params refer to a set of words that can be interchanged with each other. For example, "dad" and "father" can both represent the same concept in a given context. Params allow you to handle variations and synonyms in your intent recognition.
 
-# Structs
-Struct is a sentence that can be customized to get or catch different sentences. You can create one mixing params and words.
-Example `create a {post}` where post param can be defined as
-```typescript
-const post = ["post", "blog", "new"]
-```
+## Structs
+Structs are customizable sentence patterns that help capture different variations of sentences. They consist of a combination of params and words. For example, a struct could be "create a {post}" where the param "post" can be defined as `const post = ["post", "blog", "new"]`. Structs enable flexible intent matching by accommodating different sentence structures.
 
-# How to Use
+## How to Use
+To use NLU Basic, you need to define an instance of the `NluBasicRepository` and the `RecognizeText` classes. By default, NLU Basic provides a MongoDB repository implementation called `NluBasicMongoRepository`. However, you can define your own custom repository by implementing the `NluBasicRepository` interface. Feel free to experiment and create repositories tailored to your specific needs.
 
-You should define a `NluBasicRepository` and the `RecognizeText`. By default, nlu-basic provides a Mongo repository implementation `NluBasicMongoRepository`. You can define another repository if you like. To define a custom repository you have to match the `NluBasicRepository` interface with API reference and it will work as expected. Feel free to make experiments.
-
-# Recognizer
-The core of the library is the recognizer so you can define it as.
-
+## Recognizer
+The core component of NLU Basic is the recognizer, which is an instance of the `RecognizeText` class. You can create a recognizer as follows:
 ```typescript
 const recognizer = new RecognizeText();
 ```
 
-After you define the recognizer you should train it by giving a repo.
+After creating the recognizer, you need to train it by providing a repository:
 ```typescript
-recognizer.train(entityRepository)
+recognizer.train(entityRepository);
 ```
-This way giving the repo makes it possible to have different repos and optimize your app. You can define each repo to check different kinds of sentences. For example a repo for sales and others to support questions.
+Training the recognizer allows it to learn from the entities defined in the repository and improve its recognition capabilities.
 
-
-After you can try to recognize a sentence with.
-
+To recognize a sentence, use the `recognize` method:
 ```typescript
 const response = await recognizer.recognize(someText);
 ```
+The `recognize` method takes a text input and returns the recognized intent(s) and associated information.
 
-When the recognizer finds a 1(100%) confidence it returns one object but when it can not find a 100% match it will add to the response any sentence that the confidence is greater than minConfidence parameter.
-# Min Confidence
-Is the minimum confidence that is acceptable. You can update it when creating the Recognizer or use the updateConfidence method.
+If the recognizer finds a 100% confidence match, it returns a single response object. However, if a 100% match is not found, it adds any sentence with a confidence greater than the `minConfidence` parameter to the response.
+
+## Min Confidence
+The minimum confidence (`minConfidence`) represents the acceptable confidence level for recognizing intents. You can set the `minConfidence` when creating the recognizer or use the `updateConfidence` method to modify it later. For example:
 ```typescript
 const recognizer = new RecognizeText(0.95); // 95% minConfidence
 
-// Or by the method
-recognizer.updateConfidence(0.87) // 87% minConfidence
+// Or using the method
+recognizer.updateConfidence(0.87); // 87% minConfidence
 ```
 
-# Response
-The response object can be an array or a unique answer with a shape.
-```typescript
-intent: string, // Wich intent is the text associated in the repo
-date: Date | null, // Date if there can be identified one (Not supported now)
-intentStruct: string, // Struct that makes a match with the text
-params: ParamsResponse, // Params as object identified with struct
-confidence: number // Between 0 and 1 
-```
+## Response
+The response object returned by the recognizer can be either an array of responses or a single response object. It has the following properties:
+- `intent`: The recognized intent associated with the text in the repository.
+- `date`: Date information if identified (not supported at the moment).
+- `intentStruct`: The struct that matched the input text.
+- `params`: The identified params as an object based on the struct.
+- `confidence`: The confidence score for the recognition, ranging from 0 to 1.
 
-# NluBasicRepository
-
-You should define a NluBasicRepository or use the default NluBasicMongoRepository.
-To initialize the NluBasicMongoRepository you have to provide a URI connection string of mongo.
-
+## NluBasicRepository
+To use NLU Basic, you need to define a repository. The default repository provided is `NluBasicMongoRepository`, which is designed for MongoDB. To initialize the `NluBasicMongoRepository`, provide a MongoDB URI connection string:
 ```typescript
 const entityRepository = new NluBasicMongoRepository("uriTest");
 ```
 
-# MongoRepo Config
-When initialize you can pass three parameters directly on the constructor by calling the setUp method.
-
+## MongoRepo Config
+When initializing the `NluBasicMongoRepository`, you can pass three optional parameters directly to the constructor or use the `setUp` method:
 ```typescript
 const entityRepository = new NluBasicMongoRepository(uri: string, databaseName: string, collectionName: string);
 
-// Or
-entityRepository.setUp(uri: string, databaseName: string, collectionName: string)
-```
+// Or use the method
+entityRepository.setUp(uri
 
-If not passed the default values are
-* databaseName = "nlu-basic" 
-* collectionName = "entities"
+: string, databaseName: string, collectionName: string);
+```
+If you don't provide these parameters, the default values are as follows:
+- `databaseName`: "nlu-basic"
+- `collectionName`: "entities"
+
+These parameters allow you to customize the MongoDB database and collection used by the repository.
