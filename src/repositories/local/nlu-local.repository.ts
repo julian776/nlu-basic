@@ -28,7 +28,7 @@ export class NluBasicLocalRepository implements NluBasicRepository {
     return this.entities[intent]
   }
 
-  async addEntities(entities: Entity[]): Promise<boolean> {
+  async addEntities(entities: Entity[], override=false): Promise<boolean> {
     try {
       const entitiesToAdd = await Promise.all(
         entities.map(async (entity) => {
@@ -38,12 +38,20 @@ export class NluBasicLocalRepository implements NluBasicRepository {
       );
   
       await Promise.all(entitiesToAdd.map((entity) => {
-        if (entity) {        
-          this.entities[entity.intent] = entity;
+        if (entity) {
+          const exists = entity.intent in this.entities
+          const isToAdd = !exists || (exists && override)
+          
+          if (isToAdd) {
+            this.entities[entity.intent] = entity;
+          }
         }
       }));
+      
       return true;
     } catch (err) {
+      console.log(err);
+      
       return false
     }
   }
