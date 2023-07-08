@@ -24,6 +24,10 @@ export class NluBasicLocalRepository implements NluBasicRepository {
     return entities 
   }
 
+  async getEntity(intent: string): Promise<Entity> {
+    return this.entities[intent]
+  }
+
   async addEntities(entities: Entity[]): Promise<boolean> {
     try {
       const entitiesToAdd = await Promise.all(
