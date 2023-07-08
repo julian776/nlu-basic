@@ -1,7 +1,7 @@
 import { Entity, NluBasicLocalRepository, RecognizeText } from "../../../nlu-basic";
 
 describe("Full example test", () => {
-  test.only("Full example test should pass", async () => {
+  test("Full example test should pass", async () => {
     const text = "I need shirts info";
     const struct = "{pronoun} {need} shirts {info}";
     const params = {
@@ -12,7 +12,6 @@ describe("Full example test", () => {
 
     // Repo
     const entity = new Entity("Info Shirts", [struct], params);
-    //console.log(!entity.intent);
     const entityRepository = new NluBasicLocalRepository();
     await entityRepository.addEntities([entity])
 
@@ -22,7 +21,7 @@ describe("Full example test", () => {
     const response = await recognizer.recognize(text);
     
     if (Array.isArray(response)) {
-      response.map(entity => console.log(entity));
+      response.forEach(entity => console.log(entity));
     } else {
       console.log(response);
     }

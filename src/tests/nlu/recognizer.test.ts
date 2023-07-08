@@ -1,11 +1,5 @@
 import { RecognizeText } from "../../nlu/recognizer/recognizer";
 import { Entity } from "../../types/repositories/models/entity.model";
-//import { NluBasicMongoRepository } from "../../repositories/nlu-basic.repository";
-//jest.mock("../../repositories/nlu-basic.repository");
-
-//let mockedMongoRepository = jest.mock('NluBasicMongoRepository');
-
-// TODO: Clean comments
 
 const { NluBasicMongoRepository } = jest.createMockFromModule<
   typeof import("../../repositories/mongo/nlu-mongo.repository")
@@ -44,8 +38,7 @@ describe("Recognizer test", () => {
     NluBasicMongoRepository.prototype.getAllEntities = jest.fn(() =>
       Promise.resolve([new Entity("Info Shirts", [struct], params)])
     );
-    //jest.spyOn(mockedMongoRepository, 'getAllEntities').mockImplementation();
-
+    
     const entityRepository = new NluBasicMongoRepository("uriTest");
     const recognizer = new RecognizeText();
     recognizer.train(entityRepository);
@@ -73,8 +66,6 @@ describe("Test confidence parameter", () => {
   });
 
   test("Should fail on invalid range on constructor", () => {
-    const entityRepository = new NluBasicMongoRepository("uriTest");
-
     expect(() => new RecognizeText(1.01)).toThrowError(invalidRangeString);
   });
 
