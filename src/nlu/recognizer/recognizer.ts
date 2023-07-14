@@ -43,7 +43,8 @@ export class RecognizeText implements Recognizer {
    */
   async recognize(
     text: string,
-    strict = false
+    strict: boolean = false,
+    flexMatch = true,
   ): Promise<ResponseEntity | ResponseEntity[]> {
     const intents = await this.entityRepository.getAllEntities();
     
@@ -61,7 +62,8 @@ export class RecognizeText implements Recognizer {
             text,
             struct,
             entity.paramExamples,
-            strict
+            strict,
+            flexMatch
           );
           
           if (compareResult.confidence === 1) {
@@ -113,7 +115,8 @@ export class RecognizeText implements Recognizer {
     text: string,
     intentStruct: string,
     paramsExamples: ParamExamples,
-    strict = false
+    strict: boolean = false,
+    flexMatch: boolean = true,
   ): Promise<{ confidence: number; params: ParamsResponse }> {
     const textWords = text.split(" ");
     const structWords = intentStruct.split(" "); // intentStruct.replace(/{[a-zA-Z]}/, '')
@@ -127,7 +130,8 @@ export class RecognizeText implements Recognizer {
           structWord,
           textWord,
           paramsExamples,
-          paramsAcc
+          paramsAcc,
+          flexMatch
         );
         paramsAcc = responseValidated.paramsAcc;
         if (responseValidated.hasCoincidence) {
@@ -159,7 +163,7 @@ export class RecognizeText implements Recognizer {
    * @param {NluBasicRepository} entityRepository
    * @returns {void}
    */
-  train(entityRepository: NluBasicRepository) {
+  train(entityRepository: NluBasicRepository): void {
     if (!entityRepository) {
       throw new Error("Not repository provided");
     }
@@ -236,18 +240,24 @@ export class RecognizeText implements Recognizer {
     structWord: string,
     textWord: string,
     paramsExamples: ParamExamples,
-    paramsAcc: ParamsResponse
-  ) {
+    paramsAcc: ParamsResponse,
+    flexMatch: boolean
+  ): { hasCoincidence: boolean; paramsAcc: ParamsResponse; } {
     const responseValidated = {
       hasCoincidence: true,
       paramsAcc,
     };
-    if (structWord.includes("{") && structWord.includes("}")) {
-      const param = structWord.replace(/[\{\}]+/g, "");
-      const paramExamples = paramsExamples[param];
+    const params = structWord.match(/\{.+\}+/g)
+    if (params) {
+      const param = params[0]
+      const paramExamples = paramsExamples[param.replace(/[{}]+/g, "")];
+      
+      if (flexMatch && textWord) {
+        textWord = textWord.replace(/[?<>*&^#@!$()-+./`~,=_|[\]]/, '')
+      }
       const isParam = this.validateParam(textWord, paramExamples);
       if (isParam) {
-        responseValidated.paramsAcc[param] = textWord;
+        responseValidated.paramsAcc[param.replace(/[{}]+/g, "")] = textWord;
         responseValidated.hasCoincidence = true;
       }
     } else {
@@ -277,6 +287,8 @@ export class RecognizeText implements Recognizer {
    * @returns {boolean}
    */
   private validateParam(word: string, paramExamples: Array<string>): boolean {
+    if (!paramExamples) return false
+    
     return paramExamples.includes(word) ? true : false;
   }
 
